@@ -1,11 +1,5 @@
-from urllib import request
 import requests
-import sys
-import urllib3
-from bs4 import BeautifulSoup
-import json
 import pytest
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 def Register(url,data):
