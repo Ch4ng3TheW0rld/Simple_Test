@@ -4,6 +4,7 @@ import sys
 import urllib3
 from bs4 import BeautifulSoup
 import json
+import pytest
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
@@ -27,7 +28,7 @@ def Register(url,data):
 
         if "token" in res.json():
             token = res.json()['token']
-            return token
+            return token,res.status_code
     return False
 
 
@@ -51,36 +52,56 @@ def Login(url,data):
 
         if "token" in res.json():
             token = res.json()['token']
-            return token
+            return token,res.status_code
     return False
 
 
 
-if __name__ == '__main__':
+#--------------------Review Data
+# if __name__ == '__main__':
     
-    data = {"email": "eve.holt@reqres.in","password": "pistol"}
+#     data = {"email": "eve.holt@reqres.in","password": "pistol"}
     
-    try:
-        url = sys.argv[1].strip()
-    except IndexError:
-        print("[-] Use example: python3 %s 'url'" % sys.argv[0])
-        sys.exit(-1)
-    print("[+] API Test for Register & Login")
+#     try:
+#         url = sys.argv[1].strip()
+#     except IndexError:
+#         print("[-] Use example: python3 %s 'url'" % sys.argv[0])
+#         sys.exit(-1)
+#     print("[+] API Test for Register & Login")
 
-    # Register
-    register = Register(url,data)    
-    if register:
-        token = register
-        print("[+] Register Token is {}".format(token))    
-    else:
-        print("[+] Register Failed")
-        sys.exit(-1)
+#     # Register
+#     register_token,status = Register(url,data)    
+#     if register_token:
+#         print("[+] Register Token is {}".format(register_token))    
+#     else:
+#         print("[+] Register Failed")
+#         sys.exit(-1)
 
-    # Login
-    login = Login(url,data)    
-    if login:
-        token = login
-        print("[+] Login Token is {}".format(token))    
-    else:
-        print("[+] Login Failed")
-        sys.exit(-1)
+#     # Login
+#     login_token,status = Login(url,data)    
+#     if login_token:
+#         # token = login
+#         print("[+] Login Token is {}".format(login_token))    
+#     else:
+#         print("[+] Login Failed")
+#         sys.exit(-1)
+
+
+
+# -------------------------Test Report
+test_url = "https://reqres.in"
+test_data = {"email": "eve.holt@reqres.in","password": "pistol"}
+
+@pytest.mark.filterwarnings('ignore::urllib3.exceptions.InsecureRequestWarning')
+def test_Register():
+    test_token,test_status = Register(test_url,test_data)
+    print("Test Registered Token is: {}".format(test_token))
+    assert len(test_token) != 0
+    assert test_status==200
+
+@pytest.mark.filterwarnings('ignore::urllib3.exceptions.InsecureRequestWarning')
+def test_Login():
+    test_token,test_status = Login(test_url,test_data)
+    print("Test Login Token is: {}".format(test_token))
+    assert len(test_token) != 0
+    assert test_status==200
